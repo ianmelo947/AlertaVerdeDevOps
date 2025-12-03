@@ -2,37 +2,25 @@ name: Deploy to AWS
 
 on:
   push:
-    branches:
-      - main
-      - staging
+    branches: [ "main", "staging" ]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Baixar Codigo
+        uses: actions/checkout@v3
 
-    - name: Deploy to EC2 via SSH
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.HOST_DNS }}
-        username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.EC2_SSH_KEY }}
-        port: 22
-        # Aumenta o tempo limite para 30 minutos (compilação C++ demora)
-        command_timeout: 30m
-        # Evita perguntas de "sim/não"
-        script_stop: true
-        script: |
-          # Entra na pasta
-          cd AlertaVerdeDevOps
-          
-          # Descarta alterações locais para evitar erro de merge
-          git reset --hard
-          git pull origin main
-          
-          # Tenta subir sem reconstruir tudo do zero (mais rápido)
-          # Se precisarmos recompilar, o Docker fará apenas o necessário
-          sudo docker-compose up -d --build
+      - name: Conectar e Atualizar
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST_DNS }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          command_timeout: 30m
+          script: |
+            cd AlertaVerdeDevOps
+            git reset --hard
+            git pull origin main
+            sudo docker-compose up -d --build
