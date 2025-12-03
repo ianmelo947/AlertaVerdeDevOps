@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alerta Verde - Sistema de Monitoramento Climático Rural</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css"> 
+</head>
+<body>
+
+    <div class="container">
+        <div class="auth-container" id="auth-container">
+            <div class="auth-welcome">
+                <h2><i class="fas fa-tractor"></i> Alerta Verde</h2>
+                <p>Acompanhe as condições climáticas e gerencie suas culturas com nossa plataforma especializada para produtores rurais.</p>
+                <div style="font-size: 5rem; opacity: 0.7;">
+                    <i class="fas fa-seedling"></i>
+                </div>
+                <p>Cadastre-se para acessar previsões meteorológicas, recomendações de plantio e muito mais!</p>
+            </div>
+            <div class="auth-form-container">
+                <form class="auth-form" id="login-form">
+                    <h3>Entrar no Sistema</h3>
+                    <div class="form-group">
+                        <label for="login-email">E-mail:</label>
+                        <input type="email" id="login-email" class="form-control" placeholder="seu@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Senha:</label>
+                        <input type="password" id="login-password" class="form-control" placeholder="Sua senha" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Entrar</button>
+                    <div class="auth-switch">
+                        Não tem uma conta? <a href="#" id="switch-to-register">Cadastre-se</a>
+                    </div>
+                </form>
+                
+                <form class="auth-form" id="register-form" style="display: none;">
+                    <h3>Criar Conta</h3>
+                    <div class="form-group">
+                        <label for="register-name">Nome Completo:</label>
+                        <input type="text" id="register-name" class="form-control" placeholder="Seu nome completo" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-email">E-mail:</label>
+                        <input type="email" id="register-email" class="form-control" placeholder="seu@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">Senha:</label>
+                        <input type="password" id="register-password" class="form-control" placeholder="Mínimo 6 caracteres" minlength="6" required>
+                        <div class="password-strength" id="password-strength"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-confirm">Confirmar Senha:</label>
+                        <input type="password" id="register-confirm" class="form-control" placeholder="Digite novamente a senha" required>
+                        <div class="password-match" id="password-match" style="font-size: 0.8rem; margin-top: 5px;"></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="register-btn">Cadastrar</button>
+                    <div class="auth-switch">
+                        Já tem uma conta? <a href="#" id="switch-to-login">Fazer login</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="app-content" id="app-content">
+            <header>
+                <h1><i class="fas fa-seedling"></i> Alerta Verde</h1>
+                <p class="subtitle">Acompanhamento meteorológico especializado para produtores rurais</p>
+                <div class="user-info">
+                    <span class="user-greeting" id="user-greeting">Olá, Usuário!</span>
+                    <span id="user-email">usuario@exemplo.com</span>
+                    <button class="logout-btn" id="logout-btn">Sair <i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </header>
+            
+            <div class="tabs">
+                <button class="tab active" data-tab="clima">Condições Climáticas</button>
+                <button class="tab" data-tab="agricultura">Gestão Agrícola</button>
+            </div>
+            
+            <div class="tab-content active" id="clima-content">
+                <div class="search-box" role="search">
+                    <label for="city-search" class="sr-only">Buscar cidade</label>
+                    <input type="text" id="city-search" class="search-input" placeholder="Digite uma cidade..." value="Recife">
+                    <button class="search-btn" aria-label="Buscar dados climáticos">
+                        <i class="fas fa-search" aria-hidden="true"></i> Buscar
+                    </button>
+                </div>
+                
+                <div class="offline-warning" id="offline-warning">
+                    <i class="fas fa-wifi"></i> Você está visualizando dados offline.
+                </div>
+                
+                <div class="api-status" id="api-status">
+                    <i class="fas fa-sync-alt"></i> Conectado à API OpenWeatherMap
+                </div>
+                
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Carregando dados climáticos...</p>
+                </div>
+                
+                <div class="error-message" id="error-message">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p id="error-text">Não foi possível carregar os dados.</p>
+                </div>
+                
+                <div id="weather-content">
+                    <div class="current-weather">
+                        <div class="weather-desc">
+                            <i class="fas fa-cloud-sun weather-icon"></i>
+                            <span class="weather-text">Carregando...</span>
+                        </div>
+                        <div class="temp">--°C</div>
+                        
+                        <div class="details-grid">
+                            <div class="detail-card">
+                                <i class="fas fa-tint"></i>
+                                <div class="detail-value">--%</div>
+                                <div class="detail-label">Umidade</div>
+                            </div>
+                            <div class="detail-card">
+                                <i class="fas fa-wind"></i>
+                                <div class="detail-value">-- km/h</div>
+                                <div class="detail-label">Vel. Vento</div>
+                            </div>
+                            <div class="detail-card">
+                                <i class="fas fa-compress-alt"></i>
+                                <div class="detail-value">-- hPa</div>
+                                <div class="detail-label">Pressão</div>
+                            </div>
+                            <div class="detail-card">
+                                <i class="fas fa-eye"></i>
+                                <div class="detail-value">-- km</div>
+                                <div class="detail-label">Visibilidade</div>
+                            </div>
+                        </div>
+                        
+                        <div class="location">
+                            <i class="fas fa-map-marker-alt"></i> Carregando localização...
+                        </div>
+                    </div>
+                    
+                    <div class="agriculture-alert" id="weather-alert">
+                        <i class="fas fa-info-circle"></i>
+                        <span id="alert-text">Aguardando dados climáticos...</span>
+                    </div>
+                    
+                    <div class="forecast">
+                        <h2 class="forecast-title">Previsão para os próximos 5 dias</h2>
+                        <div class="forecast-cards" id="forecast-container"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="agricultura-content">
+                <div class="agriculture-grid">
+                    <div class="crop-form">
+                        <h3><i class="fas fa-plus-circle"></i> Cadastrar Nova Cultura</h3>
+                        <form id="crop-form">
+                            <div class="form-group">
+                                <label for="crop-name">Nome da Cultura:</label>
+                                <input type="text" id="crop-name" class="form-control" placeholder="Ex: Milho, Feijão, etc." required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="crop-type">Tipo de Cultura:</label>
+                                <select id="crop-type" class="form-control" required>
+                                    <option value="">Selecione o tipo</option>
+                                    <option value="grãos">Grãos</option>
+                                    <option value="hortaliças">Hortaliças</option>
+                                    <option value="frutas">Frutas</option>
+                                    <option value="raízes">Raízes e Tubérculos</option>
+                                    <option value="outros">Outros</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="planting-date">Data de Plantio:</label>
+                                <input type="date" id="planting-date" class="form-control" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="crop-area">Área (m²):</label>
+                                <input type="number" id="crop-area" class="form-control" step="1" min="1" placeholder="Ex: 500" required>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Cadastrar Cultura
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="recommendations">
+                        <h3><i class="fas fa-lightbulb"></i> Recomendações Baseadas no Clima</h3>
+                        <div id="recommendations-list">
+                            <div class="recommendation-card">
+                                <h4><i class="fas fa-check-circle"></i> Cultivos Recomendados</h4>
+                                <p id="recommended-crops">Aguardando dados climáticos...</p>
+                            </div>
+                            <div class="recommendation-card">
+                                <h4><i class="fas fa-tint"></i> Recomendação de Irrigação</h4>
+                                <p id="irrigation-tip">Aguardando dados climáticos...</p>
+                            </div>
+                            <div class="recommendation-card">
+                                <h4><i class="fas fa-calendar-alt"></i> Período Ideal</h4>
+                                <p id="planting-period">Aguardando dados climáticos...</p>
+                            </div>
+                        </div>
+                        
+                        <div class="crop-list">
+                            <h4><i class="fas fa-list"></i> Suas Culturas Cadastradas</h4>
+                            <div id="crops-container">
+                                <p>Nenhuma cultura cadastrada ainda.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <footer>
+                <p>Dados fornecidos por OpenWeatherMap • Especializado para região de Recife-PE</p>
+            </footer>
+        </div>
+    </div>
+    
+    <script src="app.js" defer></script>
+</body>
+</html>

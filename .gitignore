@@ -1,0 +1,13 @@
+# Ignorar bancos de dados locais
+backend/data/*
+zabbix-mysql-data/
+data/
+*.sqlite
+
+# Ignorar pastas pesadas e logs
+node_modules/
+desktop-app/node_modules/
+desktop-app/out/
+*.log
+.DS_Store
+Thumbs.db

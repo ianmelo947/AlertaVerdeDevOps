@@ -1,0 +1,95 @@
+services:
+  # --- SUA APLICAÇÃO (JÁ EXISTENTE) ---
+  backend:
+    build: ./backend
+    container_name: alerta-verde-backend
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend/data:/data
+    restart: always
+    networks:
+      - alerta-net
+
+  frontend:
+    build: ./frontend
+    container_name: alerta-verde-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: always
+    networks:
+      - alerta-net
+
+  # --- MONITORAMENTO (NOVO) ---
+
+  # 1. Banco de dados exclusivo para o Zabbix
+  mysql-server:
+    image: mysql:8.0
+    container_name: zabbix-mysql
+    environment:
+      - MYSQL_DATABASE=zabbix
+      - MYSQL_USER=zabbix
+      - MYSQL_PASSWORD=zabbix_pwd
+      - MYSQL_ROOT_PASSWORD=root_pwd
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - ./zabbix-mysql-data:/var/lib/mysql
+    networks:
+      - alerta-net
+    restart: always
+
+  # 2. Servidor Zabbix (O Cérebro)
+  zabbix-server:
+    image: zabbix/zabbix-server-mysql:ubuntu-latest
+    container_name: zabbix-server
+    ports:
+      - "10051:10051"
+    environment:
+      - DB_SERVER_HOST=mysql-server
+      - MYSQL_DATABASE=zabbix
+      - MYSQL_USER=zabbix
+      - MYSQL_PASSWORD=zabbix_pwd
+      - MYSQL_ROOT_PASSWORD=root_pwd
+    depends_on:
+      - mysql-server
+    networks:
+      - alerta-net
+    restart: always
+
+  # 3. Interface Web do Zabbix (O Painel)
+  zabbix-web:
+    image: zabbix/zabbix-web-nginx-mysql:ubuntu-latest
+    container_name: zabbix-web
+    ports:
+      - "8081:8080" # Acessar em localhost:8081
+    environment:
+      - DB_SERVER_HOST=mysql-server
+      - MYSQL_DATABASE=zabbix
+      - MYSQL_USER=zabbix
+      - MYSQL_PASSWORD=zabbix_pwd
+      - ZBX_SERVER_HOST=zabbix-server
+      - PHP_TZ=America/Recife
+    depends_on:
+      - zabbix-server
+    networks:
+      - alerta-net
+    restart: always
+
+  # 4. Grafana (Visualização)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana-monitor
+    ports:
+      - "3000:3000" # Acessar em localhost:3000
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      - alerta-net
+    restart: always
+
+networks:
+  alerta-net:
+    driver: bridge
