@@ -28,7 +28,7 @@ class AgricultureApp {
     constructor() {
         this.API_KEY = 'c078160b604897141ff65b50363e12a8'; 
         this.BASE_URL = 'https://api.openweathermap.org/data/2.5';
-        this.API_BACKEND = 'http://localhost:8080/api'; 
+        this.API_BACKEND = '/api'; 
         
         this.currentTemp = 25.0;
         this.init();

@@ -1,8 +1,9 @@
-# Usa uma imagem leve do servidor Nginx
 FROM nginx:alpine
 
-# Copia seus arquivos HTML/CSS/JS para a pasta pública do Nginx
+# Copia os arquivos do site
 COPY . /usr/share/nginx/html
 
-# O Nginx roda na porta 80 por padrão
+# Copia a configuração personalizada do Nginx
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 EXPOSE 80
