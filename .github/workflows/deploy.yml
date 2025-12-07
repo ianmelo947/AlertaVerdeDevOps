@@ -1,26 +1,32 @@
-name: Deploy to AWS
+name: Deploy Automatico na AWS
 
 on:
   push:
-    branches: [ "main", "staging" ]
+    branches:
+      - main
+      - staging
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    
     steps:
-      - name: Baixar Codigo
-        uses: actions/checkout@v3
+    - name: Checkout do Codigo
+      uses: actions/checkout@v3
 
-      - name: Conectar e Atualizar
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST_DNS }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          port: 22
-          command_timeout: 30m
-          script: |
-            cd AlertaVerdeDevOps
-            git reset --hard
-            git pull origin main
-            sudo docker-compose up -d --build
+    - name: Deploy via SSH
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST_DNS }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        port: 22
+        command_timeout: 30m
+        script: |
+         
+          cd AlertaVerdeDevOps
+         
+          git reset --hard origin/main
+          git pull origin main
+          
+          sudo docker compose up -d --build
