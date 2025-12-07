@@ -1,4 +1,4 @@
-name: Deploy Automatico na AWS
+name: Deploy Automatico na AWS (denovo)
 
 on:
   push:
@@ -23,10 +23,9 @@ jobs:
         port: 22
         command_timeout: 30m
         script: |
-         
           cd AlertaVerdeDevOps
-         
           git reset --hard origin/main
           git pull origin main
           
+          # AQUI ESTAVA O ERRO: Agora usamos espaço, não traço
           sudo docker compose up -d --build
