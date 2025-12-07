@@ -1,0 +1,44 @@
+name: Deploy Producao
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout do Codigo
+      uses: actions/checkout@v3
+
+    - name: Deploy via SSH
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST_DNS }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        port: 22
+        command_timeout: 30m
+        script: |
+          echo ">>> INICIANDO DEPLOY NOVO (SEM TRACO) <<<"
+          
+          # 1. Entra na pasta
+          cd AlertaVerdeDevOps
+          
+          # 2. Garante que o Git não trave com arquivos locais modificados
+          git fetch --all
+          git reset --hard origin/main
+          git pull origin main
+          
+          # 3. Confere a versão (Só pra garantir no log)
+          echo ">>> Versao Docker:"
+          docker compose version
+          
+          # 4. O COMANDO MÁGICO (SEM TRAÇO)
+          echo ">>> Recriando tudo..."
+          sudo docker compose down
+          sudo docker compose up -d --build
+          
+          echo ">>> DEPLOY CONCLUIDO COM SUCESSO! <<<"
