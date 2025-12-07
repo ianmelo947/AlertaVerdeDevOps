@@ -26,6 +26,8 @@ jobs:
           cd AlertaVerdeDevOps
           git reset --hard origin/main
           git pull origin main
+         
+          echo "Testando versao do Docker:"
+          docker compose version
           
-          # AQUI ESTAVA O ERRO: Agora usamos espaço, não traço
           sudo docker compose up -d --build
