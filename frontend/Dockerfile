@@ -3,7 +3,7 @@ FROM nginx:alpine
 # 1. Copia os arquivos do site
 COPY . /usr/share/nginx/html
 
-# 2. Escreve a configuração do Proxy (Sem usar COPY de arquivo externo)
+# 2. Configura o Proxy Reverso com o NOME CORRETO DO CONTAINER
 RUN printf 'server {\n\
     listen 80;\n\
     server_name localhost;\n\
@@ -15,7 +15,8 @@ RUN printf 'server {\n\
     }\n\
 \n\
     location /api/ {\n\
-        proxy_pass http://backend:8080;\n\
+# CORREÇÃO AQUI: Usando o nome exato definido no docker-compose.yml\n\
+        proxy_pass http://alerta-verde-backend:8080;\n\
         proxy_set_header Host $host;\n\
         proxy_set_header X-Real-IP $remote_addr;\n\
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n\
