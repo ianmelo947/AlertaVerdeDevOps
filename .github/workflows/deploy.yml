@@ -1,10 +1,9 @@
-name: Deploy Automatico na AWS (denovo)
+name: Deploy Producao (Novo)
 
 on:
   push:
     branches:
       - main
-      - staging
 
 jobs:
   deploy:
@@ -23,9 +22,22 @@ jobs:
         port: 22
         command_timeout: 30m
         script: |
-          cd AlertaVerdeDevOps
-          git reset --hard origin/main
-          git pull origin main
+          echo ">>> INICIANDO DEPLOY NOVO <<<"
           
-          # AQUI ESTAVA O ERRO: Agora usamos espaço, não traço
+          # 1. Entra na pasta
+          cd AlertaVerdeDevOps
+          
+          # 2. Atualiza o codigo
+          git fetch --all
+          git reset --hard origin/main
+          
+          # 3. Confere a versao do Docker (Para aparecer no log)
+          echo ">>> Versao do Docker Instalada:"
+          docker compose version
+          
+          # 4. Derruba e Sobe (COM O COMANDO CERTO - SEM TRAÇO)
+          echo ">>> Recriando Containers..."
+          sudo docker compose down
           sudo docker compose up -d --build
+          
+          echo ">>> SUCESSO TOTAL! <<<"
