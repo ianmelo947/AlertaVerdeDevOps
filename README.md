@@ -1,8 +1,8 @@
-# 🚜 Alerta Verde - Agricultura de Precisão (DevOps Edition)
+# Alerta Verde - Agricultura de Precisão (DevOps Edition)
 
 Plataforma de monitoramento agrícola e simulação de colheita utilizando **Computação de Alta Performance (HPC)** e arquitetura de microsserviços em nuvem.
 
-## 🏗️ Arquitetura do Projeto
+## Arquitetura do Projeto
 
 O sistema é totalmente containerizado utilizando **Docker** e orquestrado via **Docker Compose V2**.
 
@@ -12,7 +12,7 @@ O sistema é totalmente containerizado utilizando **Docker** e orquestrado via *
 * **Observabilidade:** Stack completa de monitoramento com Zabbix Server, MySQL e Grafana.
 * **CI/CD:** Pipeline automatizado via GitHub Actions com deploy na AWS EC2.
 
-## 🚀 Como Rodar (Instalação)
+## Como Rodar (Instalação)
 
 ### Pré-requisitos
 * Docker & Docker Compose V2
@@ -36,7 +36,7 @@ O sistema é totalmente containerizado utilizando **Docker** e orquestrado via *
     * **Grafana (Dashboards):** [http://localhost:3000](http://localhost:3000)
     * **Zabbix (Monitoramento):** [http://localhost:8081](http://localhost:8081)
 
-## 🔐 Credenciais de Acesso (Monitoramento)
+## Credenciais de Acesso (Monitoramento)
 
 | Serviço | URL | Usuário | Senha |
 | :--- | :--- | :--- | :--- |
@@ -44,7 +44,7 @@ O sistema é totalmente containerizado utilizando **Docker** e orquestrado via *
 | **Zabbix** | Porta 8081 | `Admin` (Maiúsculo) | `zabbix` |
 | **Aplicação** | Porta 80 | *Criar conta na tela* | *Sua senha* |
 
-## 🧪 Testando a API (Postman/cURL)
+## Testando a API (Postman/cURL)
 
 Para testar o motor de simulação OpenCL sem usar o navegador:
 
