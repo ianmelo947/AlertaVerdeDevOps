@@ -48,7 +48,7 @@ O sistema é totalmente containerizado utilizando **Docker** e orquestrado via *
 
 Para testar o motor de simulação OpenCL sem usar o navegador:
 
-```bash
+```bash 
 curl -X POST http://localhost/api/simulation \
   -H "Content-Type: application/json" \
   -d '{"area": "1000", "temp": "28.5"}'
