@@ -1,4 +1,4 @@
-name: Deploy Producao (Novo)
+name: Deploy Producao
 
 on:
   push:
@@ -22,22 +22,23 @@ jobs:
         port: 22
         command_timeout: 30m
         script: |
-          echo ">>> INICIANDO DEPLOY NOVO <<<"
+          echo ">>> INICIANDO DEPLOY NOVO (SEM TRACO) <<<"
           
           # 1. Entra na pasta
           cd AlertaVerdeDevOps
           
-          # 2. Atualiza o codigo
+          # 2. Garante que o Git não trave com arquivos locais modificados
           git fetch --all
           git reset --hard origin/main
+          git pull origin main
           
-          # 3. Confere a versao do Docker (Para aparecer no log)
-          echo ">>> Versao do Docker Instalada:"
+          # 3. Confere a versão (Só pra garantir no log)
+          echo ">>> Versao Docker:"
           docker compose version
           
-          # 4. Derruba e Sobe (COM O COMANDO CERTO - SEM TRAÇO)
-          echo ">>> Recriando Containers..."
+          # 4. O COMANDO MÁGICO (SEM TRAÇO)
+          echo ">>> Recriando tudo..."
           sudo docker compose down
           sudo docker compose up -d --build
           
-          echo ">>> SUCESSO TOTAL! <<<"
+          echo ">>> DEPLOY CONCLUIDO COM SUCESSO! <<<"

@@ -1,28 +1,54 @@
-# Backend + OpenCL Worker + Docker Compose
+# Alerta Verde - Agricultura de Precisão (DevOps Edition)
 
-## Conteúdo
-- frontend files: index.html, app.js, style.css (copied from your upload or placeholders)
-- backend/: Node.js backend (Express + SQLite + JWT)
-- opencl/: C++ OpenCL worker (worker.cpp) + Dockerfile. You must download two single-file headers:
-  - httplib.h (cpp-httplib)
-  - json.hpp (nlohmann json)
+Plataforma de monitoramento agrícola e simulação de colheita utilizando **Computação de Alta Performance (HPC)** e arquitetura de microsserviços em nuvem.
 
-## Passos rápidos
-1. Coloque `httplib.h` e `json.hpp` dentro da pasta `opencl/` (links in opencl/README_HEADERS.md).
-2. Build e start:
-   ```
-   docker compose build
-   docker compose up -d
-   ```
-3. Backend servirá o frontend: http://localhost:8080
-4. Teste compute endpoint (substitua <TOKEN>):
-   ```
-   curl -X POST http://localhost:8080/api/compute \
-     -H "Authorization: Bearer <TOKEN>" \
-     -H "Content-Type: application/json" \
-     -d '{"op":"vec_add","size":1000000}'
-   ```
+## Arquitetura do Projeto
 
-## Notas
-- Para usar GPU com drivers (NVIDIA), adapte o docker-compose para `--gpus all` e ajuste a imagem do worker.
-- Troque `JWT_SECRET` por um segredo forte em produção.
+O sistema é totalmente containerizado utilizando **Docker** e orquestrado via **Docker Compose V2**.
+
+* **Frontend:** Nginx (Alpine) servindo uma SPA (Single Page Application) com Proxy Reverso.
+* **Backend:** C++ 11 (Bare Metal) com biblioteca `httplib` e banco de dados SQLite embutido.
+* **HPC (Simulação):** OpenCL (via POCL) para processamento paralelo de dados de colheita no Backend.
+* **Observabilidade:** Stack completa de monitoramento com Zabbix Server, MySQL e Grafana.
+* **CI/CD:** Pipeline automatizado via GitHub Actions com deploy na AWS EC2.
+
+## Como Rodar (Instalação)
+
+### Pré-requisitos
+* Docker & Docker Compose V2
+* Git
+
+### Passos Rápidos
+1.  Clone o repositório:
+    ```bash
+    git clone [https://github.com/ianmelo947/AlertaVerdeDevOps.git](https://github.com/ianmelo947/AlertaVerdeDevOps.git)
+    cd AlertaVerdeDevOps
+    ```
+
+2.  Suba o ambiente (o build do C++ pode levar alguns minutos):
+    ```bash
+    docker compose up -d --build
+    ```
+
+3.  Acesse os serviços:
+    * **Aplicação Web:** [http://localhost](http://localhost) (ou IP da AWS)
+    * **API Backend:** Acessível via rota interna `/api`
+    * **Grafana (Dashboards):** [http://localhost:3000](http://localhost:3000)
+    * **Zabbix (Monitoramento):** [http://localhost:8081](http://localhost:8081)
+
+## Credenciais de Acesso (Monitoramento)
+
+| Serviço | URL | Usuário | Senha |
+| :--- | :--- | :--- | :--- |
+| **Grafana** | Porta 3000 | `admin` | `admin` (pedirá para trocar no 1º acesso) |
+| **Zabbix** | Porta 8081 | `Admin` (Maiúsculo) | `zabbix` |
+| **Aplicação** | Porta 80 | *Criar conta na tela* | *Sua senha* |
+
+## Testando a API (Postman/cURL)
+
+Para testar o motor de simulação OpenCL sem usar o navegador:
+
+```bash 
+curl -X POST http://localhost/api/simulation \
+  -H "Content-Type: application/json" \
+  -d '{"area": "1000", "temp": "28.5"}'
